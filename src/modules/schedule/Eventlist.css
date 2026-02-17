@@ -1,0 +1,272 @@
+/* src/component/schedule/EventList.css */
+/* ===== Conteneurs principaux ===== */
+.event-list-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+/* ===== Onglets de navigation ===== */
+.tabs-container {
+  display: flex;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e9ecef;
+  padding: 0.5rem;
+  gap: 0.25rem;
+}
+
+.tab {
+  flex: 1;
+  padding: 0.5rem 0.25rem;
+  border: none;
+  background: transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #495057;
+  text-align: center;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.tab:hover {
+  background: #e9ecef;
+}
+
+.tab.active {
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+/* Styles pour l'indicateur de survol pendant le drag */
+.tab.drag-over {
+  background-color: #e3f2fd;
+  color: #1a73e8;
+  box-shadow: 0 0 0 2px #bbdefb;
+  transform: translateY(-2px);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+  z-index: 10;
+  position: relative;
+}
+
+.tab.drag-over::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 2px solid #1a73e8;
+  border-radius: 4px;
+  animation: none; /* Désactive l'animation de pulsation par défaut */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+/* Animation uniquement au survol initial */
+.tab.drag-over:not(.drag-over-initial)::after {
+  animation: pulse-border 0.5s ease-out;
+  opacity: 1;
+}
+
+@keyframes pulse-border {
+  0% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.7; transform: scale(1.01); }
+  100% { opacity: 0.3; transform: scale(1); }
+}
+
+.tab.active.drag-over {
+  background-color: #d0e3fa;
+  font-weight: 600;
+}
+
+.drop-indicator {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #1a73e8;
+  animation: pulse 0.1s infinite;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+}
+
+/* Styles pour le contenu des onglets */
+.tab-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 0.5rem;
+  position: relative;
+}
+
+/* Styles pour les éléments d'événement */
+.event-item {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 6px;
+  margin-bottom: 0.5rem;
+  padding: 0.75rem;
+  transition: all 0.2s ease;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.event-item:hover {
+  border-color: #dee2e6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  cursor: grab;
+}
+
+/*.event-item.selected {
+  border-color: #1a73e8;
+  background-color: #f0f7ff;
+}*/
+
+.drag-handle:hover {
+  opacity: 1;
+  background-color: #f0f0f0;
+}
+
+/* Styles pour l'élément en cours de déplacement */
+.event-item.dragging {
+  opacity: 0.5;
+  background: #f8f9fa;
+  border-style: dashed;
+}
+
+/* Style pour le corps pendant le drag */
+body.dragging {
+  cursor: move;
+  user-select: none;
+}
+
+/* Zone de dépôt */
+.drop-zone {
+  border: 2px dashed #dee2e6;
+  border-radius: 6px;
+  padding: 1rem;
+  text-align: center;
+  color: #6c757d;
+  margin: 0.5rem 0;
+  transition: all 0.2s ease;
+}
+
+.drop-zone.active {
+  border-color: #1a73e8;
+  background-color: #f0f7ff;
+  color: #1a73e8;
+}
+
+/* Message quand il n'y a pas d'événements */
+.no-events-message {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100px;
+  color: #6c757d;
+  font-style: italic;
+}
+
+/* Conteneur avec défilement pour la liste des événements */
+.events-scroll-container {
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+/* Personnalisation de la barre de défilement */
+.events-scroll-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.events-scroll-container::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.events-scroll-container::-webkit-scrollbar-thumb {
+  background: #c1c1c1;
+  border-radius: 3px;
+}
+
+.events-scroll-container::-webkit-scrollbar-thumb:hover {
+  background: #a8a8a8;
+}
+
+/* Styles pour l'élément d'événement */
+.event-item .event-time {
+  color: #666;
+  font-size: 14px;
+  min-width: 80px;
+}
+
+.event-item .event-subject {
+  flex: 1;
+  font-size: 15px;
+  color: #1f2937;
+}
+
+.event-item .event-actions {
+  display: flex;
+  gap: 4px;
+}
+
+.event-item .event-actions button {
+  padding: 4px 8px;
+  font-size: 13px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.event-item .event-actions button.edit {
+  color: #3b82f6;
+}
+
+.event-item .event-actions button.delete {
+  color: #ef4444;
+}
+
+.event-item .event-actions button:hover {
+  opacity: 0.8;
+}
+
+.event-item .event-tag {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.color-selector {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.color-selector button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.color-selector button:hover {
+  transform: scale(1.1);
+}

@@ -1,0 +1,70 @@
+.event-summary {
+  transition: all 0.2s ease;
+  user-select: none;
+  padding: 10px 12px;
+  border-radius: 6px;
+  margin: 2px 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.event-summary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.event-summary-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.event-subject {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: #333;
+}
+
+.event-time {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #666;
+  font-size: 0.85em;
+  margin-bottom: 6px;
+}
+
+.edit-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 2px 8px;
+  font-size: 0.75em;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.event-summary:hover .edit-btn {
+  opacity: 1;
+}
+
+.edit-btn:hover {
+  background: #f5f5f5;
+}
+
+
+/* Style pour les événements sélectionnés */
+.event-summary.selected {
+  box-shadow: 0 0 0 2px #3b82f6;
+  border-radius: 4px;
+}

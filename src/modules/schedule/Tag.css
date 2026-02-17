@@ -1,0 +1,444 @@
+.tag {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  margin: 0 4px;
+  border: 2px solid #fff;
+  outline: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 0;
+  position: relative;
+  vertical-align: middle;
+}
+
+.tag:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.tag:active {
+  transform: scale(0.95);
+}
+
+/* Conteneur du déclencheur du tag */
+.tag-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease;
+}
+
+.tag-trigger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Cercle de couleur */
+.tag {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+/* Libellé du tag */
+.tag-label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+}
+
+/* Styles pour le popover */
+.tag-popover {
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  background: white;
+  z-index: 1000;
+}
+
+.tag-popover {
+  padding: 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e2e8f0;
+  background: white;
+  z-index: 1000;
+  width: 240px;
+}
+
+.color-picker {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 180px;
+}
+
+/* Titre du sélecteur de couleurs */
+.color-picker-title {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+.color-picker-title {
+  margin: 0 0 12px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1a202c;
+  text-align: center;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+}
+
+.color-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.color-option {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  position: relative;
+}
+
+.color-option {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.color-option:hover {
+  transform: scale(1.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.color-option.selected {
+  border-color: #1a202c;
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #1a202c;
+}
+
+.color-option::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+  pointer-events: none;
+}
+
+/* Conteneur d'option de couleur */
+.color-option-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  position: relative;
+}
+
+.color-option-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* Bouton de suppression */
+.delete-tag-button {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background-color: #ef4444;
+  color: white;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0;
+  transform: scale(0.8);
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+.color-option-wrapper:hover .delete-tag-button {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.delete-tag-button:hover {
+  background-color: #dc2626;
+  transform: scale(1.1) !important;
+}
+
+.delete-tag-button:active {
+  transform: scale(0.9) !important;
+}
+
+/* Ajustement pour l'affichage du bouton de suppression au survol */
+.color-option-wrapper:hover .color-option {
+  transform: scale(1.1);
+}
+
+/* Libellé de la couleur */
+.color-label {
+  font-size: 11px;
+  color: #4a5568;
+  text-align: center;
+  line-height: 1.2;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Custom Tag Form */
+.custom-tag-form {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #e2e8f0;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #4a5568;
+}
+
+.color-picker-container,
+.color-picker-container .react-colorful {
+  display: none;
+}
+
+.native-color-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.color-preview {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  border: 2px solid #e2e8f0;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.color-preview:hover {
+  transform: scale(1.05);
+}
+
+.color-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .tag-trigger {
+    background: rgba(30, 41, 59, 0.9);
+  }
+  
+  .tag-label {
+    color: #f1f5f9;
+  }
+  
+  .tag-popover {
+    background: #1e293b;
+    border-color: #334155;
+  }
+  
+  .color-picker-title {
+    color: #f8fafc;
+  }
+  
+  .color-label {
+    color: #cbd5e1;
+  }
+  
+  .custom-tag-form {
+    border-top-color: #334155;
+  }
+  
+  .form-group label {
+    color: #e2e8f0;
+  }
+  
+  .color-picker-container {
+    background: #0f172a;
+  }
+  
+  .add-custom-tag-button {
+    background: #1e293b;
+    border-color: #334155;
+    color: #94a3b8;
+  }
+  
+  .add-custom-tag-button:hover {
+    background: #334155;
+    color: #e2e8f0;
+  }
+  
+  .close-button {
+    color: #94a3b8;
+  }
+  
+  .close-button:hover {
+    background: #334155;
+    color: #e2e8f0;
+  }
+  
+  .color-preview {
+    border-color: #4a5568;
+  }
+}
+
+/* Add Custom Tag Button */
+.add-custom-tag-button {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px dashed #cbd5e0;
+  background: #f8fafc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #64748b;
+  padding: 0;
+}
+
+.add-custom-tag-button:hover {
+  background: #f1f5f9;
+  transform: scale(1.1);
+  color: #475569;
+  border-color: #94a3b8;
+}
+
+/* Popover Header */
+.popover-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.close-button {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  padding: 4px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.close-button:hover {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Tag Container */
+.tag-container {
+  display: inline-block;
+}
+
+/* Adjust color grid for the new button */
+.color-grid {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 280px) {
+  .color-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  
+  .tag-popover {
+    width: 200px;
+  }
+  
+  .color-picker-container .react-colorful {
+    max-width: 160px;
+  }
+}
+
+/* Animation for the form */
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.custom-tag-form {
+  animation: slideIn 0.2s ease-out forwards;
+}
+
+/* Focus styles for better accessibility */
+.add-custom-tag-button:focus-visible,
+.color-option:focus-visible,
+.close-button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}

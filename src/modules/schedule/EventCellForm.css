@@ -1,0 +1,302 @@
+/* Styles pour le formulaire d'édition */
+.schedule-edit-block {
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px solid #e2e8f0;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  margin-top: 0.5rem;
+  z-index: 50;
+}
+
+.schedule-edit-header {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.schedule-edit-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.inline-event-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.event-subject {
+  font-weight: 500;
+  min-width: 80px;
+  display: inline-block;
+}
+
+/* Styles de base pour les boutons */
+.schedule-edit-btn,
+.schedule-cancel-btn,
+.schedule-delete-btn {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid transparent;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  align-items: center;
+  display: flex;
+}
+
+.schedule-edit-btn {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.schedule-edit-btn:hover {
+  background-color: #2563eb;
+}
+
+.schedule-cancel-btn {
+  background-color: #fff;
+  border-color: #e2e8f0;
+  color: #4b5563;
+}
+
+.schedule-cancel-btn:hover {
+  background-color: #f8fafc;
+}
+
+.schedule-delete-btn {
+  background-color: #fff;
+  border-color: #fecaca;
+  color: #dc2626;
+  width: 100%;
+}
+
+.schedule-delete-btn:hover {
+  background-color: #fef2f2;
+}
+
+/* Sélecteur d'heure */
+.schedule-time-range {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin: 0.5rem 0;
+}
+
+.time-input-container {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
+  flex: 1;
+}
+
+.time-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.875rem;
+  text-align: center;
+  color: #1f2937;
+  background: #fff;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.time-input:focus {
+  outline: none;
+  border-color: #4d7cfe;
+  box-shadow: 0 0 0 2px rgba(77, 124, 254, 0.2);
+}
+
+.time-input:disabled {
+  background-color: #f5f5f5;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.time-separator {
+  padding: 0 2px;
+  color: #666;
+  font-weight: bold;
+}
+
+/* Sélecteur d'heure avancé */
+.time-picker-container {
+  width: 100%;
+  position: relative;
+}
+
+.time-picker-input {
+  width: 100%;
+  padding: 8px 12px;
+  font-size: 14px;
+  text-align: center;
+  background-color: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.time-picker-input:focus {
+  outline: none;
+  border-color: #4d7cfe;
+  box-shadow: 0 0 0 2px rgba(77, 124, 254, 0.2);
+}
+
+.time-picker-input:disabled {
+  width: 60px;
+  font-size: 11px;
+  background-color: #f3f4f6;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Styles pour l'en-tête de la cellule d'événement */
+.event-cell-form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
+  position: relative;
+}
+
+.event-cell-form input[type="checkbox"] {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.event-cell-form:hover input[type="checkbox"],
+.event-cell-form input[type="checkbox"]:checked {
+  opacity: 1;
+}
+
+.event-cell-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.event-cell-controls {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.event-cell-tag {
+  margin-left: 4px;
+}
+
+/* Ajustements pour le mode édition en ligne */
+.event-cell-form.inline-edit {
+  padding: 4px 8px;
+}
+
+.event-cell-form.inline-edit .event-cell-header {
+  margin-bottom: 4px;
+}
+
+/* Ajustements pour le contenu du formulaire */
+.schedule-time-range {
+  margin-top: 4px;
+}
+
+/* Style pour le bouton de suppression en mode inline */
+.schedule-delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+}
+
+.schedule-delete-btn:hover {
+  opacity: 1;
+}
+
+/* Ajustement pour le champ de saisie */
+.schedule-edit-block input[type="text"] {
+  width: 100%;
+  padding: 4px 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Boutons de validation et d'annulation */
+.validation-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.save-button,
+.cancel-button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.save-button {
+  border: 1px solid #28a745;
+  background-color: #28a745;
+  color: white;
+}
+
+.save-button:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.cancel-button {
+  border: 1px solid #dc3545;
+  background-color: white;
+  color: #dc3545;
+}
+
+.cancel-button:hover {
+  background-color: #f8f9fa;
+}
+
+/* Style pour le conteneur des contrôles d'événement */
+.event-cell-controls {
+  display: flex;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+/* Style pour le bouton de suppression */
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #dc3545;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.delete-btn:hover {
+  color: #c82333;
+}
+
+/* Style pour la case à cocher de sélection */
+.event-checkbox {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  margin-right: 8px;
+}

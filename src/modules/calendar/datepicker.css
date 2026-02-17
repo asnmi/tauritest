@@ -1,0 +1,36 @@
+.datepicker-container {
+  display: flex;
+  align-items: center;
+}
+
+.datepicker-button {
+  width: 100%;
+  justify-content: start;
+  text-align: left;
+  font-weight: normal;
+}
+
+.datepicker-button[data-empty='true'] {
+  color: var(--muted-foreground);
+}
+
+.datepicker-content {
+  width: auto;
+  padding: 0;
+}
+
+.datepicker-footer {
+  border-top: 1px solid var(--border);
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.datepicker-footer button {
+  height: 2rem;
+  font-size: 0.75rem;
+}
+
+.datepicker-footer .clear-button {
+  color: var(--destructive);
+}

@@ -1,0 +1,1 @@
+export type PageType = 'home' | 'editor' | 'history' | 'schedule' | 'todolist' | 'kanban' | 'reorderablelist';

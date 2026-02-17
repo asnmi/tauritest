@@ -1,0 +1,564 @@
+/* Variables et styles de base */
+:root {
+  --primary-color: #4d7cfe;
+  --primary-hover: #3a6bfd;
+  --text-primary: #1a202c;
+  --text-secondary: #4a5568;
+  --border-color: #e2e8f0;
+  --background: #fff;
+  --background-hover: #f8f9ff;
+  --disabled: #cbd5e0;
+  --error: #e53e3e;
+  --success: #38a169;
+  --gray-100: #f8fafc;
+  --gray-200: #f1f5f9;
+  --gray-300: #e2e8f0;
+  --gray-400: #cbd5e0;
+  --gray-500: #94a3b8;
+  --gray-600: #64748b;
+  --gray-700: #475569;
+  --gray-800: #1e293b;
+}
+
+/* Conteneur principal */
+.timepicker-container {
+  position: relative;
+  display: inline-block;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-primary);
+  width: 100%;
+  max-width: 100%;
+  z-index: 1;
+}
+
+/* Bouton et champ de saisie */
+.timepicker-btn {
+  width: 100%;
+  padding: 10px 40px 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--background);
+  color: var(--text-primary);
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 14px;
+  height: 40px;
+}
+
+.timepicker-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+}
+
+.timepicker-btn:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(77, 124, 254, 0.2);
+}
+
+.timepicker-btn.disabled {
+  background-color: var(--background-hover);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Bouton de déclenchement */
+.timepicker-toggle {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 24px;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  padding: 0;
+  margin: 0;
+}
+
+.timepicker-toggle:hover {
+  background: var(--background-hover);
+  color: var(--primary-color);
+}
+
+.timepicker-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(77, 124, 254, 0.3);
+}
+
+.timepicker-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Icône */
+.timepicker-icon {
+  width: 16px;
+  height: 16px;
+  color: inherit;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.2s ease;
+}
+
+/* En-tête du timepicker */
+.timepicker-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--gray-300);
+  text-align: center;
+  background-color: var(--gray-100);
+  border-radius: 8px 8px 0 0;
+}
+
+.timepicker-time {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gray-800);
+  letter-spacing: 0.5px;
+}
+
+.time-value {
+  min-width: 24px;
+  text-align: center;
+}
+
+.time-separator {
+  color: var(--gray-600);
+  padding: 0 2px;
+}
+
+.time-ampm {
+  margin-left: 8px;
+  font-size: 0.9em;
+  font-weight: 500;
+  color: var(--gray-700);
+  background: var(--gray-200);
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.timepicker-header-title {
+  flex: 1;
+  text-align: center;
+  color: var(--gray-800);
+}
+
+/* Grille principale */
+.timepicker-grid {
+  display: flex;
+  padding: 12px 16px;
+  gap: 12px;
+  background: var(--background);
+  overflow: visible;
+  flex-wrap: nowrap;
+  justify-content: center;
+  min-width: 320px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.timepicker-grid::-webkit-scrollbar {
+  width: 6px;
+}
+
+.timepicker-grid::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.timepicker-grid::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 3px;
+}
+
+.timepicker-grid::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Sélecteur de format d'heure */
+.timepicker-format-selector {
+  display: flex;
+  justify-content: center;
+  padding: 8px 12px;
+  border-top: 1px solid #edf2f7;
+  background-color: #f8fafc;
+  gap: 8px;
+}
+
+.timepicker-format-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.timepicker-format-btn:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: #f0f4ff;
+}
+
+.timepicker-format-btn.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(-8px) scale(0.98); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0) scale(1);
+  }
+}
+
+.timepicker-format-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9;
+}
+
+/* Colonnes (heures, minutes, AM/PM) */
+.timepicker-grid {
+  display: flex;
+  gap: 8px;
+  padding: 8px 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
+  flex-wrap: nowrap;
+  overflow-x: visible;
+  justify-content: center;
+  align-items: flex-start;
+  scrollbar-width: none; /* Masque la barre de défilement pour Firefox */
+}
+
+/* Masque la barre de défilement pour WebKit (Chrome, Safari) */
+.timepicker-grid::-webkit-scrollbar {
+  display: none;
+}
+
+.timepicker-hours,
+.timepicker-minutes {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  width: 100%;
+  padding: 4px 0;
+}
+
+.timepicker-ampm {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 8px;
+  margin-top: 0;
+}
+
+/* Séparateur vertical entre les heures et les minutes */
+.timepicker-separator {
+  width: 1px;
+  background-color: #e2e8f0;
+  margin: 0 4px;
+  align-self: stretch;
+}
+
+/* Conteneur pour les heures et minutes */
+.timepicker-time-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 56px;
+  overflow: visible;
+  padding: 4px 2px;
+  margin: 0;
+}
+
+/* Conteneur pour AM/PM */
+.timepicker-ampm-section {
+  padding: 4px 0;
+  margin: 0 0 0 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 60px;
+  overflow: visible;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  border-left: 1px solid #e2e8f0;
+  padding-left: 8px;
+}
+
+/* Personnalisation de la barre de défilement */
+.timepicker-time-section::-webkit-scrollbar,
+.timepicker-ampm-section::-webkit-scrollbar {
+  width: 3px;
+}
+
+.timepicker-time-section::-webkit-scrollbar-track,
+.timepicker-ampm-section::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 2px;
+  margin: 4px 0;
+}
+
+.timepicker-time-section::-webkit-scrollbar-thumb,
+.timepicker-ampm-section::-webkit-scrollbar-thumb {
+  background-color: #cbd5e0;
+  border-radius: 2px;
+}
+
+.timepicker-time-section::-webkit-scrollbar-thumb:hover,
+.timepicker-ampm-section::-webkit-scrollbar-thumb:hover {
+  background-color: #a0aec0;
+}
+
+/* Masquer la barre de défilement quand elle n'est pas nécessaire */
+.timepicker-time-section:not(:hover)::-webkit-scrollbar-thumb,
+.timepicker-ampm-section:not(:hover)::-webkit-scrollbar-thumb {
+  background-color: transparent;
+}
+
+/* Boutons de temps */
+.timepicker-cell {
+  padding: 4px 6px;
+  border: 1px solid var(--border-color);
+  background: white;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-size: 12px;
+  text-align: center;
+  color: var(--text-primary);
+  min-width: 36px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  margin: 1px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
+.timepicker-cell:hover:not(.selected) {
+  background-color: var(--background-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.timepicker-cell.selected {
+  background-color: #1a73e8;
+  color: white;
+  font-weight: 500;
+  border-color: #1a73e8;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+.timepicker-cell:disabled {
+  color: var(--disabled);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Actions du timepicker */
+.timepicker-actions {
+  display: flex;
+  padding: 8px 10px;
+  border-top: 1px solid var(--border-color);
+  background-color: #f8f9fa;
+  gap: 6px;
+  justify-content: space-between;
+  border-radius: 0 0 8px 8px;
+  flex-shrink: 0;
+}
+
+.timepicker-clear-btn,
+.timepicker-validate-btn {
+  flex: 1;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-weight: 500;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+  text-align: center;
+  min-height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}
+
+.timepicker-validate-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.timepicker-validate-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.timepicker-validate-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.timepicker-validate-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.timepicker-validate-btn:hover:not(:disabled) {
+  background-color: var(--primary-hover);
+}
+
+.timepicker-validate-btn:disabled {
+  background-color: #90caf9;
+  cursor: not-allowed;
+}
+
+/* Bouton Aucune heure */
+.timepicker-clear-btn {
+  background-color: white;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  transition: all 0.15s ease;
+}
+
+.timepicker-clear-btn:hover:not(:disabled) {
+  background-color: #f1f3f5;
+  border-color: #d1d5db;
+  color: var(--text-primary);
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.timepicker-clear-btn:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+.timepicker-clear-btn:hover {
+  background-color: #f5f5f5;
+  border-color: #bdbdbd;
+}
+
+.timepicker-clear-btn:active {
+  background-color: #e0e0e0;
+}
+
+.timepicker-clear-btn {
+  background-color: transparent;
+  color: var(--text-secondary);
+  border-color: var(--border-color);
+}
+
+.timepicker-clear-btn:hover {
+  background-color: var(--background-hover);
+}
+
+/* Tailles */
+.timepicker-sm {
+  font-size: 13px;
+}
+
+.timepicker-sm {
+  padding: 6px 32px 6px 10px;
+  font-size: 13px;
+}
+
+.timepicker-lg {
+  font-size: 16px;
+}
+
+.timepicker-lg {
+  padding: 12px 48px 12px 16px;
+  font-size: 16px;
+}
+
+/* États */
+.timepicker-error {
+  border-color: var(--error);
+}
+
+.timepicker-success {
+  border-color: var(--success);
+}
+
+/* Animation de chargement */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Hover du bouton "Aucune heure" */
+.timepicker-none-btn:hover {
+  background-color: #e0e0e0;
+  color: #333333;
+  border-color: #cccccc;
+}
+
+/* Hover du bouton de validation */
+.timepicker-validate-btn:hover {
+  background-color: #1976d2;
+  transform: translateY(-1px);
+}
+
+/* États désactivés des boutons */
+.timepicker-none-btn:disabled,
+.timepicker-validate-btn:disabled {
+  background-color: #e0e0e0;
+  color: #999999;
+  border-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* États désactivés globaux */
+.timepicker-btn-disabled,
+.timepicker-select-disabled {
+  background: #f5f5f5 !important;
+  color: #bdbdbd !important;
+  border-color: #e0e0e0 !important;
+  cursor: not-allowed !important;
+  border-color: #ccc !important;
+}

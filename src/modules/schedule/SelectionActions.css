@@ -1,0 +1,53 @@
+/* Actions de sélection */
+.selection-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #f0f4ff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #d1e0ff;
+}
+
+.selection-count {
+  font-size: 13px;
+  color: #3b82f6;
+  font-weight: 500;
+  margin-right: 8px;
+}
+
+.action-hint {
+  margin-left: 8px;
+  font-size: 12px;
+  color: #4b5563;
+  background: #e5e7eb;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.selection-hint {
+  font-size: 13px;
+  color: #6b7280;
+  font-style: italic;
+}
+
+/* Style pour les boutons d'action */
+.selection-actions button {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.selection-actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.selection-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
