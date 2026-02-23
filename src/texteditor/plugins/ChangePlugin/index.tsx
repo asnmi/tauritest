@@ -6,20 +6,31 @@
  *
  */
 
-
 /**
  * dirtyARMBlocks and dirtyUpdateBlocs are used to track the changes in the document
  * but they are not optimized, because lexical undo redo does not detect
  * dirty node efficiently after undo redo operations
  */
 
-import type { EditorState, LexicalNode, SerializedLexicalNode } from 'lexical';
+import type { EditorState, LexicalNode, SerializedLexicalNode } from "lexical";
 
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getSelection, $isElementNode, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createState, HISTORY_MERGE_TAG, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
-import useLayoutEffect from './useLayoutEffect';
-import { useGlobalContext, BlocChangesType } from '@/texteditor/context/GlobalContext';
-import { generateKeyBetween } from '@/texteditor/algorithm/fractional_indexing';
+import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import {
+  $getSelection,
+  $isElementNode,
+  $isRangeSelection,
+  COMMAND_PRIORITY_EDITOR,
+  createState,
+  HISTORY_MERGE_TAG,
+  REDO_COMMAND,
+  UNDO_COMMAND,
+} from "lexical";
+import useLayoutEffect from "./useLayoutEffect";
+import {
+  useGlobalContext,
+  BlocChangesType,
+} from "@/texteditor/context/GlobalContext";
+import { generateKeyBetween } from "@/texteditor/algorithm/fractional_indexing";
 import {
   BlocJson,
   newBloc,
@@ -29,27 +40,26 @@ import {
   SUCCESS,
   ERROR,
   NO_CHANGE,
-  getBlocById
-} from '@/texteditor/database/useBlocDatabase';
-import { useNavigation } from '@/texteditor/context/NavigationContext';
-import { useCallback, useEffect, useRef } from 'react';
+  getBlocById,
+} from "@/texteditor/database/useBlocDatabase";
+import { useNavigation } from "@/texteditor/context/NavigationContext";
+import { useCallback, useEffect, useRef } from "react";
 import {
   removeIdState,
   removePositionState,
   getIdState,
   setPositionState,
   setIdState,
-  getPositionState
-} from '@/texteditor/DocumentState/DocumentStateManager'
-import { logger } from '@/logger/logger';
+  getPositionState,
+} from "@/texteditor/DocumentState/DocumentStateManager";
+import { logger } from "@/logger/logger";
 
 export const BLOC_ACTIONS = {
-  ADD: 'add_bloc',
-  REMOVE: 'remove_bloc',
-  UPDATE: 'update_bloc',
-  MOVE: 'move_bloc'
+  ADD: "add_bloc",
+  REMOVE: "remove_bloc",
+  UPDATE: "update_bloc",
+  MOVE: "move_bloc",
 } as const;
-
 
 export function ChangePlugin({
   ignoreHistoryMergeTagChange = true,
@@ -58,9 +68,7 @@ export function ChangePlugin({
 }: {
   ignoreHistoryMergeTagChange?: boolean;
   ignoreSelectionChange?: boolean;
-  onChange?: (
-    editorState: EditorState,
-  ) => void;
+  onChange?: (editorState: EditorState) => void;
 }): null {
   const [editor] = useLexicalComposerContext();
   const { setModified, documentIsModified } = useGlobalContext();
@@ -72,7 +80,12 @@ export function ChangePlugin({
   isModifiedRef.current = documentIsModified();
 
   // ARM = add, remove, move
-  let { dirtyARMBlocs, dirtyUpdateBlocs, keyIdPositionList, setKeyIdPositionList } = useGlobalContext();
+  let {
+    dirtyARMBlocs,
+    dirtyUpdateBlocs,
+    keyIdPositionList,
+    setKeyIdPositionList,
+  } = useGlobalContext();
 
   // Add this inside the ChangePlugin component, after the existing useEffect hooks
   useEffect(() => {
@@ -82,7 +95,7 @@ export function ChangePlugin({
           updateBlocManager(editor._editorState);
           modifiedNodes.current.clear();
         } catch (error) {
-          console.error('Error updating bloc manager:', error);
+          console.error("Error updating bloc manager:", error);
         }
       }
     }, 1000);
@@ -93,8 +106,8 @@ export function ChangePlugin({
   }, [modifiedNodes.current]);
 
   useEffect(() => {
-    const handleUndoRedo = (type: 'undo' | 'redo') => {
-      const action = type === 'undo' ? 'UNDO' : 'REDO';
+    const handleUndoRedo = (type: "undo" | "redo") => {
+      const action = type === "undo" ? "UNDO" : "REDO";
       logger.log(`${action} action triggered`);
 
       const prevEditorState = editor.getEditorState();
@@ -120,7 +133,7 @@ export function ChangePlugin({
             prevEditorState,
             dirtyElements,
             dirtyLeaves,
-            setModified
+            setModified,
           );
           logger.log(`${action} completed successfully`);
         } catch (error) {
@@ -134,14 +147,14 @@ export function ChangePlugin({
     // Enregistrer les commandes
     const unregisterUndo = editor.registerCommand(
       UNDO_COMMAND,
-      () => handleUndoRedo('undo'),
-      COMMAND_PRIORITY_EDITOR
+      () => handleUndoRedo("undo"),
+      COMMAND_PRIORITY_EDITOR,
     );
 
     const unregisterRedo = editor.registerCommand(
       REDO_COMMAND,
-      () => handleUndoRedo('redo'),
-      COMMAND_PRIORITY_EDITOR
+      () => handleUndoRedo("redo"),
+      COMMAND_PRIORITY_EDITOR,
     );
 
     return () => {
@@ -168,7 +181,7 @@ export function ChangePlugin({
           prevEditorState,
           dirtyElements,
           dirtyLeaves,
-          setModified
+          setModified,
         );
 
         //detectLastActiveBloc(editorState, prevEditorState);
@@ -180,14 +193,17 @@ export function ChangePlugin({
     );
   }, [editor, ignoreHistoryMergeTagChange, ignoreSelectionChange, onChange]);
 
-  function getContent(node: LexicalNode, editorState: EditorState): SerializedLexicalNode {
+  function getContent(
+    node: LexicalNode,
+    editorState: EditorState,
+  ): SerializedLexicalNode {
     const nodeNum = node.getIndexWithinParent();
     return editorState.toJSON().root.children[nodeNum];
   }
 
   function detectLastActiveBloc(
     editorState: EditorState,
-    prevEditorState: EditorState
+    prevEditorState: EditorState,
   ) {
     if (isModifiedRef.current === true) {
       let currentNode: LexicalNode;
@@ -196,7 +212,7 @@ export function ChangePlugin({
 
         if ($isRangeSelection(selection)) {
           const node = selection.anchor.getNode();
-          currentNode = node
+          currentNode = node;
 
           while (currentNode && !$isElementNode(currentNode)) {
             const parent = currentNode.getParent();
@@ -220,8 +236,11 @@ export function ChangePlugin({
             lastCurrentNode = parent;
           }
 
-          if (lastCurrentNode && currentNode &&
-            lastCurrentNode.__key != currentNode.__key) {
+          if (
+            lastCurrentNode &&
+            currentNode &&
+            lastCurrentNode.__key != currentNode.__key
+          ) {
             //const nodeKey = lastCurrentNode.getKey();
             updateBlocManager(editorState);
           }
@@ -260,24 +279,28 @@ export function ChangePlugin({
     prevEditorState: EditorState,
     dirtyElements: Map<string, boolean>,
     dirtyLeaves: Set<string>,
-    setModified: (state: BlocChangesType) => void
+    setModified: (state: BlocChangesType) => void,
   ) {
     dirtyLeaves.forEach((nodeKey) => {
-      let ret = { type: '', key: '', id: '' };
+      let ret = { type: "", key: "", id: "" };
       editorState.read(() => {
         const node = editorState._nodeMap.get(nodeKey);
         if (node) {
           let tempNode = node.getParent();
           let parentNode;
-          if (tempNode?.__key === 'root') {
+          if (tempNode?.__key === "root") {
             parentNode = node;
           } else {
             parentNode = tempNode;
           }
           if (parentNode) {
             let id = keyIdPositionList.get(parentNode.__key)?.id;
-            if(id){
-              ret = { type: BLOC_ACTIONS.UPDATE, key: parentNode.__key, id: id };
+            if (id) {
+              ret = {
+                type: BLOC_ACTIONS.UPDATE,
+                key: parentNode.__key,
+                id: id,
+              };
             }
             setModified(ret);
           }
@@ -319,7 +342,7 @@ export function ChangePlugin({
 
         if (ok) {
           dirtyUpdateBlocs.push(ret);
-          logger.log('typing in bloc', ret.key);
+          logger.log("typing in bloc", ret.key);
         }
       }
     });
@@ -335,109 +358,114 @@ export function ChangePlugin({
         setModified(ret);
         setARMChanges(ret);
         addBlocManager(ret, editorState);
-        console.log('add', ret);
-      } else
-        if (!nodeExists && nodeExisted) {
-          let id = '';
-          let ok = false;
+      } else if (!nodeExists && nodeExisted) {
+        let id = "";
+        let ok = false;
+        prevEditorState.read(() => {
+          const prevNode = prevEditorState._nodeMap.get(nodeKey);
+          if (prevNode) {
+            id = keyIdPositionList.get(prevNode.__key)?.id || "";
+            ok = true;
+          }
+        });
+
+        if (ok && id.length > 0) {
+          let ret = { type: BLOC_ACTIONS.REMOVE, key: nodeKey, id: id };
+          setModified(ret);
+          setARMChanges(ret);
+          deleteBlocManager(id);
+          console.log("remove", ret);
+        } else {
+          logger.error("not enough infos to remove bloc", nodeKey);
+        }
+      } else if (nodeExists && nodeExisted) {
+        let prevPrevSiblingKey: string | null = null;
+        let prevNextSiblingKey: string | null = null;
+        let ok = false;
+        const prevNode = prevEditorState._nodeMap.get(nodeKey);
+        if (prevNode) {
           prevEditorState.read(() => {
-            const prevNode = prevEditorState._nodeMap.get(nodeKey);
-            if (prevNode) {
-              id = keyIdPositionList.get(prevNode.__key)?.id || '';
-              ok = true;
+            const prevSibling = prevNode.getPreviousSibling();
+            const nextSibling = prevNode.getNextSibling();
+            if (prevSibling) {
+              prevPrevSiblingKey = prevSibling.__key;
+            }
+            if (nextSibling) {
+              prevNextSiblingKey = nextSibling.__key;
             }
           });
-          
-          if (ok && id.length > 0) {
-            let ret = { type: BLOC_ACTIONS.REMOVE, key: nodeKey, id: id };
+        }
+
+        let id = "";
+        let currentPrevSiblingKey: string | null = null;
+        let currentNextSiblingKey: string | null = null;
+        editorState.read(() => {
+          const currentNode = editorState._nodeMap.get(nodeKey);
+          if (currentNode) {
+            const currentPrevSibling = currentNode.getPreviousSibling();
+            const currentNextSibling = currentNode.getNextSibling();
+
+            if (currentPrevSibling) {
+              currentPrevSiblingKey = currentPrevSibling.__key;
+            }
+            if (currentNextSibling) {
+              currentNextSiblingKey = currentNextSibling.__key;
+            }
+
+            id = keyIdPositionList.get(currentNode.__key)?.id || "";
+            ok = true;
+          }
+        });
+        if (ok) {
+          if (
+            prevPrevSiblingKey !== currentPrevSiblingKey &&
+            prevNextSiblingKey !== currentNextSiblingKey
+          ) {
+            let ret = { type: BLOC_ACTIONS.MOVE, key: nodeKey, id: id };
             setModified(ret);
             setARMChanges(ret);
-            deleteBlocManager(id);
-            console.log('remove', ret);
-          } else {
-            logger.error('not enough infos to remove bloc', nodeKey);
+            moveBlocManager(ret, editorState);
+            console.log("move", ret);
           }
-        } else
-          if (nodeExists && nodeExisted) {
-            let prevPrevSiblingKey: string | null = null;
-            let prevNextSiblingKey: string | null = null;
-            let ok = false;
-            const prevNode = prevEditorState._nodeMap.get(nodeKey);
-            if (prevNode) {
-              prevEditorState.read(() => {
-                const prevSibling = prevNode.getPreviousSibling();
-                const nextSibling = prevNode.getNextSibling();
-                if (prevSibling) {
-                  prevPrevSiblingKey = prevSibling.__key;
-                }
-                if (nextSibling) {
-                  prevNextSiblingKey = nextSibling.__key;
-                }
-              });
-            }
-
-            let id = '';
-            let currentPrevSiblingKey: string | null = null;
-            let currentNextSiblingKey: string | null = null;
-            editorState.read(() => {
-              const currentNode = editorState._nodeMap.get(nodeKey);
-              if (currentNode) {
-                const currentPrevSibling = currentNode.getPreviousSibling();
-                const currentNextSibling = currentNode.getNextSibling();
-
-                if (currentPrevSibling) {
-                  currentPrevSiblingKey = currentPrevSibling.__key;
-                }
-                if (currentNextSibling) {
-                  currentNextSiblingKey = currentNextSibling.__key;
-                }
-
-                id = keyIdPositionList.get(currentNode.__key)?.id || '';
-                ok = true;
-              }
-            });
-            if (ok) {
-              if (prevPrevSiblingKey !== currentPrevSiblingKey &&
-                prevNextSiblingKey !== currentNextSiblingKey) {
-                let ret = { type: BLOC_ACTIONS.MOVE, key: nodeKey, id: id };
-                setModified(ret);
-                setARMChanges(ret);
-                moveBlocManager(ret, editorState);
-                console.log('move', ret);
-              }
-            } else {
-              logger.error('not enough infos to move bloc')
-            }
-          }
+        } else {
+          logger.error("not enough infos to move bloc");
+        }
+      }
     });
   }
 
-  function generateIndex(node: LexicalNode | null, editorState: EditorState): string {
+  function generateIndex(
+    node: LexicalNode | null,
+    editorState: EditorState,
+  ): string {
     if (!node) return generateKeyBetween(null, null);
 
     const prevNode = node.getPreviousSibling();
     const nextNode = node.getNextSibling();
 
-    const prevPosition = prevNode ?
-      getPositionState(getContent(prevNode, editorState)) :
-      null;
-    const nextPosition = nextNode ?
-      getPositionState(getContent(nextNode, editorState)) :
-      null;
+    const prevPosition = prevNode
+      ? getPositionState(getContent(prevNode, editorState))
+      : null;
+    const nextPosition = nextNode
+      ? getPositionState(getContent(nextNode, editorState))
+      : null;
 
     return generateKeyBetween(prevPosition, nextPosition);
   }
 
-  async function addBlocManager(changes: BlocChangesType, editorState: EditorState) {
-    logger.log('adding bloc');
+  async function addBlocManager(
+    changes: BlocChangesType,
+    editorState: EditorState,
+  ) {
+    logger.log("adding bloc");
     let newItem: BlocJson = {
-      id: '',
-      position: '',
-      content: '',
-      page_id: '',
-      bloc_type: '',
+      id: "",
+      position: "",
+      content: "",
+      page_id: "",
+      bloc_type: "",
       created_at: 0,
-      updated_at: 0
+      updated_at: 0,
     };
     let ok = false;
     if (changes.type === BLOC_ACTIONS.ADD) {
@@ -445,7 +473,7 @@ export function ChangePlugin({
       await new Promise<void>((resolve) => {
         editor.update(() => {
           let node = editorState._nodeMap.get(changes.key);
-          
+
           if (node) {
             changesRef.current = changes;
 
@@ -454,13 +482,18 @@ export function ChangePlugin({
               const newIndex = generateIndex(node, editorState);
 
               if (content) {
-                //setPositionState(content, newIndex);
-                //setIdState(content, changes.id);
+                setPositionState(content, newIndex);
+                setIdState(content, changes.id);
 
-                keyIdPositionList.set(changes.key, { id: changes.id, position: newIndex });
+                keyIdPositionList.set(changes.key, {
+                  id: changes.id,
+                  position: newIndex,
+                });
                 setKeyIdPositionList(keyIdPositionList);
-                // removeIdState(content);
-                // removePositionState(content);
+
+                //clear content before db save
+                //removeIdState(content);
+                //removePositionState(content);
 
                 newItem = {
                   id: changesRef.current.id,
@@ -469,7 +502,7 @@ export function ChangePlugin({
                   page_id: getCurrentItemFromHistory().id,
                   bloc_type: node.__type,
                   created_at: Date.now(),
-                  updated_at: Date.now()
+                  updated_at: Date.now(),
                 };
                 ok = true;
                 //node.updateFromJSON(content);
@@ -481,60 +514,69 @@ export function ChangePlugin({
       });
       if (ok) {
         let res = await newBloc(newItem);
-        setModified({ key: '', type: '', id: '' });
+        setModified({ key: "", type: "", id: "" });
         if (res.length > 0) {
-          logger.log('add bloc successfully', changes.id);
+          logger.log("add bloc successfully", changes.id);
         } else {
-          logger.error('add bloc failed', changes.id);
+          logger.error("add bloc failed", changes.id);
         }
       } else {
-        logger.error('add bloc failed, newItem not defined');
+        logger.error("add bloc failed, newItem not defined");
       }
     }
   }
 
-  async function moveBlocManager(changes: BlocChangesType, editorState: EditorState) {
+  async function moveBlocManager(
+    changes: BlocChangesType,
+    editorState: EditorState,
+  ) {
     let node = editorState._nodeMap.get(changes.key);
     if (node) {
-      let newIndex = 'aa';
-      let id = '';
+      let newIndex = "aa";
       let ok = false;
       await new Promise<void>((resolve) => {
         editor.update(() => {
-          const content = getContent(node, editorState);
-          id = keyIdPositionList.get(node.__key)?.id || '';
           newIndex = generateIndex(node, editorState);
-          if (content) {
-            setPositionState(content, newIndex);
-            node.updateFromJSON(content);
-            ok = true;
-          }
+
+          // TODO: is this useful?
+          keyIdPositionList.delete(changes.key);
+          keyIdPositionList.set(changes.key, {
+            id: changes.id,
+            position: newIndex,
+          });
+          setKeyIdPositionList(keyIdPositionList);
+
+          ok = true;
           resolve();
         });
       });
       if (ok) {
-        let res = await updateBlocPosition(id, newIndex, Date.now());
-        setModified({ key: '', type: '', id: '' });
+        let res = await updateBlocPosition(changes.id, newIndex, Date.now());
+        setModified({ key: "", type: "", id: "" });
         if (res === SUCCESS) {
-          logger.log('move block successfully', changes.id);
+          logger.log("move block successfully", changes.id);
         } else if (res === ERROR) {
-          logger.error('move block failed', changes.id);
+          logger.error("move block failed", changes.id);
         } else if (res === NO_CHANGE) {
-          //logger.log('move block no change', changes.id);
+          logger.log("move block no change", changes.id);
         }
       } else {
-        logger.error('move block failed, id and Index not defined');
+        logger.error("move block failed, id and Index not defined");
       }
     }
   }
 
   async function deleteBlocManager(id: string) {
     let res = await deleteBloc(id);
-    setModified({ key: '', type: '', id: '' });
+
+    keyIdPositionList.delete(id);
+    setKeyIdPositionList(keyIdPositionList);
+
+    setModified({ key: "", type: "", id: "" });
     if (res === true) {
-      logger.log('block deleted successfully', id);
+      logger.log("block deleted successfully", id);
     } else {
-      //logger.error('NO block deleted', id);
+      logger.error("NO block deleted", id);
     }
   }
 
@@ -546,29 +588,33 @@ export function ChangePlugin({
             const node = editorState._nodeMap.get(changes.key);
             if (node) {
               const content = getContent(node, editorState);
-              let id = keyIdPositionList.get(node.__key)?.id || '';
 
-              //removeIdState(content);
-              //removePositionState(content);
-              if (id.length > 0 && id !== '') {
-                let res = await updateBlocContent(id, JSON.stringify(content), Date.now());
-                console.log('update bloc content', changes);
-                setModified({ key: '', type: '', id: '' });
+              setPositionState(content, keyIdPositionList.get(changes.key)?.position||'');
+              setIdState(content, changes.id);
+              let id = changes.id;
+
+              if (id.length > 0 && id !== "") {
+                let res = await updateBlocContent(
+                  id,
+                  JSON.stringify(content),
+                  Date.now(),
+                );
+                console.log("update bloc content", changes);
+                setModified({ key: "", type: "", id: "" });
                 if (res === SUCCESS) {
-                  logger.log('save last updated block', id);
+                  logger.log("save last updated block", id);
                 } else if (res === ERROR) {
-                  logger.error('save last updated block failed', id);
+                  logger.error("save last updated block failed", id);
                 } else if (res === NO_CHANGE) {
-                  logger.log('save last updated block no change', id);
+                  logger.log("save last updated block no change", id);
                 }
               }
             }
           }
         });
-      })
+      });
     }
   }
 
   return null;
 }
-

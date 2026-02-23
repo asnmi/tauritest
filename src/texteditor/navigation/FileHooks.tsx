@@ -108,7 +108,6 @@ export function useFile() {
       let content = JSON.parse(bloc.content);
       content.$.id = bloc.id;
       content.$.position = bloc.position;
-      content.$.updateAt = bloc.updated_at;
       return content;
     });
 
