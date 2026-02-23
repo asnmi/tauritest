@@ -6,10 +6,17 @@
  *
  */
 
+
+/**
+ * dirtyARMBlocks and dirtyUpdateBlocs are used to track the changes in the document
+ * but they are not optimized, because lexical undo redo does not detect
+ * dirty node efficiently after undo redo operations
+ */
+
 import type { EditorState, LexicalNode, SerializedLexicalNode } from 'lexical';
 
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getSelection, $isElementNode, $isRangeSelection, COMMAND_PRIORITY_EDITOR, HISTORY_MERGE_TAG, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
+import { $getSelection, $isElementNode, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createState, HISTORY_MERGE_TAG, REDO_COMMAND, UNDO_COMMAND } from 'lexical';
 import useLayoutEffect from './useLayoutEffect';
 import { useGlobalContext, BlocChangesType } from '@/texteditor/context/GlobalContext';
 import { generateKeyBetween } from '@/texteditor/algorithm/fractional_indexing';
@@ -21,10 +28,11 @@ import {
   updateBlocContent,
   SUCCESS,
   ERROR,
-  NO_CHANGE
+  NO_CHANGE,
+  getBlocById
 } from '@/texteditor/database/useBlocDatabase';
 import { useNavigation } from '@/texteditor/context/NavigationContext';
-import { useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import {
   removeIdState,
   removePositionState,
@@ -59,9 +67,30 @@ export function ChangePlugin({
   const { getCurrentItemFromHistory } = useNavigation();
   const changesRef = useRef<BlocChangesType | null>(null);
   let isModifiedRef = useRef<boolean>(false);
+  let modifiedNodes = useRef<Set<BlocChangesType>>(new Set());
+
   isModifiedRef.current = documentIsModified();
 
+  // ARM = add, remove, move
   let { dirtyARMBlocs, dirtyUpdateBlocs } = useGlobalContext();
+
+  // Add this inside the ChangePlugin component, after the existing useEffect hooks
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (modifiedNodes.current.size > 0) {
+        try {
+          updateBlocManager(editor._editorState);
+          modifiedNodes.current.clear();
+        } catch (error) {
+          console.error('Error updating bloc manager:', error);
+        }
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, [modifiedNodes.current]);
 
   useEffect(() => {
     const handleUndoRedo = (type: 'undo' | 'redo') => {
@@ -142,7 +171,7 @@ export function ChangePlugin({
           setModified
         );
 
-        detectLastActiveBloc(editorState, prevEditorState);
+        //detectLastActiveBloc(editorState, prevEditorState);
 
         if (onChange) {
           onChange(editorState);
@@ -246,7 +275,7 @@ export function ChangePlugin({
             parentNode = tempNode;
           }
           if (parentNode) {
-            let content = getContent(node, editorState);
+            let content = getContent(parentNode, editorState);
             let id = getIdState(content);
             ret = { type: BLOC_ACTIONS.UPDATE, key: parentNode.__key, id: id };
             setModified(ret);
@@ -254,30 +283,43 @@ export function ChangePlugin({
         }
       });
 
-      let len = dirtyUpdateBlocs.length;
-      let ok = false;
-
-      if (len === 0) {
-        ok = true;
-      }
-      if (len > 0) {
-        for (let i = len - 1; i >= 0; i--) {
-          let changes = dirtyUpdateBlocs[i];
-          if (changes.id === ret.id) {
-            dirtyUpdateBlocs.splice(i, 1);
-            ok = true;
-            break;
-          } else {
-            ok = true;
+      if (ret.id.length > 0) {
+        let existedNode = false;
+        if (modifiedNodes.current.size > 0) {
+          for (const node of modifiedNodes.current) {
+            if (node.key === ret.key && node.type === ret.type) {
+              existedNode = true;
+              break;
+            }
           }
         }
-      }
+        if (!existedNode && ret.id.length > 0) {
+          modifiedNodes.current.add(ret);
+        }
 
-      if (ok &&
-        ret.id.length > 0 && ret.key.length > 0 && ret.type.length > 0
-      ) {
-        dirtyUpdateBlocs.push(ret);
-        logger.log('typing in bloc', ret.key);
+        let len = dirtyUpdateBlocs.length;
+        let ok = false;
+
+        if (len === 0) {
+          ok = true;
+        }
+        if (len > 0) {
+          for (let i = len - 1; i >= 0; i--) {
+            let changes = dirtyUpdateBlocs[i];
+            if (ret.id.length > 0 && changes.id === ret.id) {
+              dirtyUpdateBlocs.splice(i, 1);
+              ok = true;
+              break;
+            } else {
+              ok = true;
+            }
+          }
+        }
+
+        if (ok) {
+          dirtyUpdateBlocs.push(ret);
+          logger.log('typing in bloc', ret.key);
+        }
       }
     });
 
@@ -291,8 +333,8 @@ export function ChangePlugin({
         let ret = { type: BLOC_ACTIONS.ADD, key: nodeKey, id: id };
         setModified(ret);
         setARMChanges(ret);
-        updateBlocManager(editorState);
         addBlocManager(ret, editorState);
+        console.log('add', ret);
       } else
         if (!nodeExists && nodeExisted) {
           let id = '';
@@ -305,12 +347,13 @@ export function ChangePlugin({
               ok = true;
             }
           });
+            console.log('remove', id);
           if (ok && id.length > 0) {
             let ret = { type: BLOC_ACTIONS.REMOVE, key: nodeKey, id: id };
             setModified(ret);
             setARMChanges(ret);
-            updateBlocManager(editorState);
             deleteBlocManager(id);
+            console.log('remove', ret);
           } else {
             logger.error('not enough infos to remove bloc', nodeKey);
           }
@@ -360,9 +403,9 @@ export function ChangePlugin({
                 setModified(ret);
                 setARMChanges(ret);
                 moveBlocManager(ret, editorState);
-                updateBlocManager(editorState);
+                console.log('move', ret);
               }
-            }else{
+            } else {
               logger.error('not enough infos to move bloc')
             }
           }
@@ -398,9 +441,11 @@ export function ChangePlugin({
     };
     let ok = false;
     if (changes.type === BLOC_ACTIONS.ADD) {
+      //can't create bloc asynchronously
       await new Promise<void>((resolve) => {
         editor.update(() => {
           let node = editorState._nodeMap.get(changes.key);
+          
           if (node) {
             changesRef.current = changes;
 
@@ -412,8 +457,8 @@ export function ChangePlugin({
                 setPositionState(content, newIndex);
                 setIdState(content, changes.id);
 
-                removeIdState(content);
-                removePositionState(content);
+                // removeIdState(content);
+                // removePositionState(content);
 
                 newItem = {
                   id: changesRef.current.id,
@@ -440,7 +485,7 @@ export function ChangePlugin({
         } else {
           logger.error('add bloc failed', changes.id);
         }
-      }else{
+      } else {
         logger.error('add bloc failed, newItem not defined');
       }
     }
@@ -475,7 +520,7 @@ export function ChangePlugin({
         } else if (res === NO_CHANGE) {
           //logger.log('move block no change', changes.id);
         }
-      }else{
+      } else {
         logger.error('move block failed, id and Index not defined');
       }
     }
@@ -492,26 +537,28 @@ export function ChangePlugin({
   }
 
   async function updateBlocManager(editorState: EditorState) {
-    if (dirtyUpdateBlocs.length > 0) {
-      editorState.read( () => {
-        dirtyUpdateBlocs.forEach(async (changes) => {
+    if (modifiedNodes.current.size > 0) {
+      editorState.read(() => {
+        modifiedNodes.current.forEach(async (changes) => {
           if (changes.type === BLOC_ACTIONS.UPDATE) {
             const node = editorState._nodeMap.get(changes.key);
             if (node) {
               const content = getContent(node, editorState);
               let id = getIdState(content);
 
-              removeIdState(content);
-              removePositionState(content);
-
-              let res = await updateBlocContent(id, JSON.stringify(content), Date.now());
+              //removeIdState(content);
+              //removePositionState(content);
+              if (id.length > 0 && id !== '') {
+                let res = await updateBlocContent(id, JSON.stringify(content), Date.now());
+                console.log('update bloc content', changes);
                 setModified({ key: '', type: '', id: '' });
-              if (res === SUCCESS) {
-                logger.log('save last updated block', id);
-              } else if (res === ERROR) {
-                logger.error('save last updated block failed', id);
-              } else if (res === NO_CHANGE) {
-                logger.log('save last updated block no change', id);
+                if (res === SUCCESS) {
+                  logger.log('save last updated block', id);
+                } else if (res === ERROR) {
+                  logger.error('save last updated block failed', id);
+                } else if (res === NO_CHANGE) {
+                  logger.log('save last updated block no change', id);
+                }
               }
             }
           }

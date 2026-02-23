@@ -107,8 +107,8 @@ export const getBlocById = async (id: string): Promise<BlocJson> => {
     let bloc = await invoke('get_bloc_by_id', { id: id }) as BlocJson;
     return bloc;
   } catch (error) {
-    console.error('Failed to initialize database:', error);
-    throw error;
+    console.warn('Failed to get bloc by id:', error);
+    return null as any;
   }
 }
 

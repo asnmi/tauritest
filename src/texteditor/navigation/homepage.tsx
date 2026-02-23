@@ -101,7 +101,7 @@ export default function Home() {
       </div>
       <div className="grid">
         {pages.map((page, index) => (
-          <Card key={index} className="card" onClick={() => openEditorWithUpdate(page)}>
+          <Card key={index} className="card">
             <CardHeader className="cardHeader">
               <CardTitle className="cardTitle">
                 <FileText className="cardIcon" />

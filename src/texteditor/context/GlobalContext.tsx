@@ -26,6 +26,7 @@ interface GlobalContextType {
   setOccurance: (occurance: string) => void;
   dirtyARMBlocs: BlocChangesType[];
   dirtyUpdateBlocs: BlocChangesType[];
+  keyIdPositionList: Map<string, {id: string, position: string}>;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -39,6 +40,8 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({ child
   const [title, setTitle] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [occurance, setOccurance] = useState<string>('');
+  let keyIdPositionList = new Map<string, {id: string, position: string}>();
+
 
   function documentIsModified(): boolean {
     let _isModified = false;
@@ -63,7 +66,8 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({ child
         occurance,
         setOccurance,
         dirtyARMBlocs,
-        dirtyUpdateBlocs
+        dirtyUpdateBlocs,
+        keyIdPositionList,
       }}
     >
       {children}
