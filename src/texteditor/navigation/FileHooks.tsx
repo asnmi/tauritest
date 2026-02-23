@@ -25,8 +25,12 @@ export function useFile() {
   const { updateItemHistory, updateItemPage, getCurrentItemFromHistory } =
     useNavigation();
 
-  const { setModified, title, setTitle, keyIdPositionList } =
-    useGlobalContext();
+  const {
+    setModified,
+    title,
+    setTitle,
+    setKeyIdPositionList
+  } = useGlobalContext();
 
   const { navigateTo } = navigate();
   const [editor] = useLexicalComposerContext();
@@ -154,6 +158,8 @@ export function useFile() {
 
       editor.read(() => {
         const editorStateS = editor._editorState;
+        const newMap = new Map<string, { id: string; position: string }>();
+
         editorStateS._nodeMap.forEach((node, key) => {
           if (node) {
             let tempNode = node.getParent();
@@ -162,13 +168,16 @@ export function useFile() {
               parentNode = node;
             }
             if (parentNode) {
-              keyIdPositionList.set(key, {
-                id: getIdState(parentNode.exportJSON()) || "",
-                position: getPositionState(parentNode.exportJSON()) || "",
+              const content = parentNode.exportJSON();
+              newMap.set(key, {
+                id: getIdState(content) || "",
+                position: getPositionState(content) || "",
               });
             }
           }
         });
+
+        setKeyIdPositionList(newMap);
       });
 
       const newItem = {

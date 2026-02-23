@@ -27,6 +27,7 @@ interface GlobalContextType {
   dirtyARMBlocs: BlocChangesType[];
   dirtyUpdateBlocs: BlocChangesType[];
   keyIdPositionList: Map<string, {id: string, position: string}>;
+  setKeyIdPositionList: (keyIdPositionList: Map<string, {id: string, position: string}>) => void;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -40,7 +41,7 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({ child
   const [title, setTitle] = useState<string>('');
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [occurance, setOccurance] = useState<string>('');
-  let keyIdPositionList = new Map<string, {id: string, position: string}>();
+  const [keyIdPositionList, setKeyIdPositionList] = useState<Map<string, {id: string, position: string}>>(new Map());
 
 
   function documentIsModified(): boolean {
@@ -68,6 +69,7 @@ export const GlobalContextProvider: React.FC<{ children: ReactNode }> = ({ child
         dirtyARMBlocs,
         dirtyUpdateBlocs,
         keyIdPositionList,
+        setKeyIdPositionList,
       }}
     >
       {children}

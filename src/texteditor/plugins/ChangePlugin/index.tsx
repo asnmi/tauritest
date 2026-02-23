@@ -72,7 +72,7 @@ export function ChangePlugin({
   isModifiedRef.current = documentIsModified();
 
   // ARM = add, remove, move
-  let { dirtyARMBlocs, dirtyUpdateBlocs } = useGlobalContext();
+  let { dirtyARMBlocs, dirtyUpdateBlocs, keyIdPositionList, setKeyIdPositionList } = useGlobalContext();
 
   // Add this inside the ChangePlugin component, after the existing useEffect hooks
   useEffect(() => {
@@ -275,9 +275,10 @@ export function ChangePlugin({
             parentNode = tempNode;
           }
           if (parentNode) {
-            let content = getContent(parentNode, editorState);
-            let id = getIdState(content);
-            ret = { type: BLOC_ACTIONS.UPDATE, key: parentNode.__key, id: id };
+            let id = keyIdPositionList.get(parentNode.__key)?.id;
+            if(id){
+              ret = { type: BLOC_ACTIONS.UPDATE, key: parentNode.__key, id: id };
+            }
             setModified(ret);
           }
         }
@@ -342,12 +343,11 @@ export function ChangePlugin({
           prevEditorState.read(() => {
             const prevNode = prevEditorState._nodeMap.get(nodeKey);
             if (prevNode) {
-              const content = getContent(prevNode, prevEditorState);
-              id = getIdState(content);
+              id = keyIdPositionList.get(prevNode.__key)?.id || '';
               ok = true;
             }
           });
-            console.log('remove', id);
+          
           if (ok && id.length > 0) {
             let ret = { type: BLOC_ACTIONS.REMOVE, key: nodeKey, id: id };
             setModified(ret);
@@ -392,7 +392,7 @@ export function ChangePlugin({
                   currentNextSiblingKey = currentNextSibling.__key;
                 }
 
-                id = getIdState(getContent(currentNode, editorState));
+                id = keyIdPositionList.get(currentNode.__key)?.id || '';
                 ok = true;
               }
             });
@@ -454,9 +454,11 @@ export function ChangePlugin({
               const newIndex = generateIndex(node, editorState);
 
               if (content) {
-                setPositionState(content, newIndex);
-                setIdState(content, changes.id);
+                //setPositionState(content, newIndex);
+                //setIdState(content, changes.id);
 
+                keyIdPositionList.set(changes.key, { id: changes.id, position: newIndex });
+                setKeyIdPositionList(keyIdPositionList);
                 // removeIdState(content);
                 // removePositionState(content);
 
@@ -470,7 +472,7 @@ export function ChangePlugin({
                   updated_at: Date.now()
                 };
                 ok = true;
-                node.updateFromJSON(content);
+                //node.updateFromJSON(content);
               }
             }
           }
@@ -500,7 +502,7 @@ export function ChangePlugin({
       await new Promise<void>((resolve) => {
         editor.update(() => {
           const content = getContent(node, editorState);
-          id = getIdState(content);
+          id = keyIdPositionList.get(node.__key)?.id || '';
           newIndex = generateIndex(node, editorState);
           if (content) {
             setPositionState(content, newIndex);
@@ -544,7 +546,7 @@ export function ChangePlugin({
             const node = editorState._nodeMap.get(changes.key);
             if (node) {
               const content = getContent(node, editorState);
-              let id = getIdState(content);
+              let id = keyIdPositionList.get(node.__key)?.id || '';
 
               //removeIdState(content);
               //removePositionState(content);
