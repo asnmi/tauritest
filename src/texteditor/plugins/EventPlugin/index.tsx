@@ -3,35 +3,36 @@ import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext
 import { COMMAND_PRIORITY_EDITOR } from 'lexical';
 import { createCommand } from 'lexical';
 import { $insertNodeToNearestRoot, mergeRegister } from '@lexical/utils';
-import { $createMathExpNode, $isMathExpNode } from '../../nodes/MathNode/MathExpNode';
-import { $createMathNodeContainer, mathNodeContainer} from '../../nodes/MathNode/mathNodeContainer';
+import { $createEventNodeContainer, eventNodeContainer } from '../../nodes/Event/EventNodeContainer';
+import { $createEventNode, $isEventNode } from '@/texteditor/nodes/Event/EventNode';
 
-export const INSERT_MATH_COMMAND = createCommand('INSERT_MATH_COMMAND');
 
-export default function MathPlugin() {
+export const INSERT_EVENT_COMMAND = createCommand('INSERT_EVENT_COMMAND');
+
+export default function EventPlugin() {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
     return mergeRegister(
       //effacer les 2 nodes ensemble au moment de suppression du parent node
-      editor.registerNodeTransform(mathNodeContainer, (node) => {
+      editor.registerNodeTransform(eventNodeContainer, (node) => {
         const children = node.getChildren();
-        if (!children || !$isMathExpNode(children[0])) {
+        if (!children || !$isEventNode(children[0])) {
           node.remove();
         }
       }),
 
       editor.registerCommand(
-      INSERT_MATH_COMMAND,
+      INSERT_EVENT_COMMAND,
       () => {
         editor.update(() => {
-            const mathExpNode = $createMathExpNode();
-            const mathNodeContainer = $createMathNodeContainer();
-            mathNodeContainer.append(mathExpNode);
+            const eventNode = $createEventNode();
+            const eventNodeContainer = $createEventNodeContainer();
+            eventNodeContainer.append(eventNode);
             
             // Remplacer la sélection actuelle par notre nœud
-            $insertNodeToNearestRoot(mathNodeContainer);
-            //mathExpNode.selectEnd();
+            $insertNodeToNearestRoot(eventNodeContainer);
+            //eventNode.selectEnd();
         });
         return true; // Commande gérée
       },

@@ -15,7 +15,7 @@ import {
   getBlocsByPageId,
   newBloc,
 } from "../database/useBlocDatabase";
-import { useCallback, useEffect } from "react";
+import { useCallback } from "react";
 import {
   getIdState,
   getPositionState,

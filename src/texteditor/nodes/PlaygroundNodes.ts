@@ -32,9 +32,10 @@ import {PageBreakNode} from './PageBreakNode';
 import {SpecialTextNode} from './SpecialTextNode';
 import {YouTubeNode} from './YouTubeNode';
 import {MathExpNode} from './MathNode/MathExpNode';
-import {nodeContainer} from './nodeContainer';
+import {mathNodeContainer} from './MathNode/mathNodeContainer';
 import {InvokerNode} from './InvokerNode';
-import {EventNode} from './EventNode'
+import {EventNode} from './Event/EventNode';
+import {eventNodeContainer} from './Event/EventNodeContainer';
 
 const PlaygroundNodes: Array<Klass<LexicalNode>> = [
   HeadingNode,
@@ -66,9 +67,10 @@ const PlaygroundNodes: Array<Klass<LexicalNode>> = [
   LayoutItemNode,
   SpecialTextNode,
   MathExpNode,
-  nodeContainer,
+  mathNodeContainer,
   InvokerNode,
-  EventNode
+  EventNode,
+  eventNodeContainer
 ];
 
 export default PlaygroundNodes;

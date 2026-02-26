@@ -66,6 +66,7 @@ import AddNewPlugin from './plugins/AddNew';
 import TitlePlugin from './plugins/TitlePlugin'
 import { ChangePlugin } from './plugins/ChangePlugin'
 import './editor.css'
+import EventPlugin from './plugins/EventPlugin';
 
 export default function Editor(): JSX.Element {
   const { historyState } = useSharedHistoryContext();
@@ -129,6 +130,12 @@ export default function Editor(): JSX.Element {
     };
   }, [isSmallWidthViewport]);
 
+  useEffect(() => {
+    setTimeout(() => {
+      editor.focus();
+    }, 0);
+  }, [editor]);
+
   return (
     <div>
       <div>
@@ -177,6 +184,7 @@ export default function Editor(): JSX.Element {
                 ErrorBoundary={LexicalErrorBoundary}
               />
               <MathPlugin />
+              <EventPlugin />
               <InvokerPlugin />
               <AddNewPlugin />
               <MarkdownShortcutPlugin />

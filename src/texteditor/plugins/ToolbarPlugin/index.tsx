@@ -93,10 +93,9 @@ import {
 } from './utils';
 import { INSERT_INVOKER_COMMAND } from '../InvokerPlugin';
 import { INSERT_MATH_COMMAND } from '../MathPlugin';
-import TimePicker from '@/modules/timepicker/Timepicker';
-import { $createEventNode, $isEventNode } from '@/texteditor/nodes/EventNode';
 import SearchPlugin from '../SearchPlugin';
 import './toolbar.css';
+import { INSERT_EVENT_COMMAND } from '../EventPlugin';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const rootTypeToRootName = {
@@ -872,19 +871,6 @@ export default function ToolbarPlugin({
   const canViewerSeeInsertDropdown = !toolbarState.isImageCaption;
   const canViewerSeeInsertCodeButton = !toolbarState.isImageCaption;
 
-  
-const [selectedTime, setSelectedTime] = useState<string>("");
-const getEventNodeTime = (editor: LexicalEditor): string => {
-  let timeFromNode = "HH:MM";
-  editor.getEditorState().read(() => {
-    const root = $getRoot();
-    const eventNode = root.getChildren().find($isEventNode);
-    if (eventNode && $isEventNode(eventNode)) {
-      timeFromNode = eventNode.getTime();
-    }
-  });
-  return timeFromNode;
-};
 const [showSearch, setShowSearch] = useState(false);
 
   return (
@@ -911,25 +897,6 @@ const [showSearch, setShowSearch] = useState(false);
         aria-label="Redo">
         <i className="format redo" />
       </button>
-
-      <TimePicker
-        value={selectedTime}
-        onChange={(time) => {
-          setSelectedTime(time);
-          editor.update(() => {
-            const root = $getRoot();
-            const eventNode = root.getChildren().find($isEventNode);
-            if (eventNode && $isEventNode(eventNode)) {
-              eventNode.setTime(time);
-            } else {
-              root.append($createEventNode(time));
-            }
-          });
-        }}
-        placeholder={getEventNodeTime(editor)}
-        timeFormat="24h"
-        className="toolbar-item"
-      />
 
       <button
         onClick={() => {
@@ -1349,6 +1316,14 @@ const [showSearch, setShowSearch] = useState(false);
                   className="item">
                   <i className="icon math" />
                   <span className="text">Math</span>
+                </DropDownItem>
+                <DropDownItem
+                  onClick={() => {
+                    activeEditor.dispatchCommand(INSERT_EVENT_COMMAND, undefined);
+                  }}
+                  className="item">
+                  <i className="icon event" />
+                  <span className="text">Event</span>
                 </DropDownItem>
 
                 <DropDownItem

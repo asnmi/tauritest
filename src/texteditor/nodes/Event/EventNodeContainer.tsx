@@ -13,20 +13,20 @@ import {
 
 import './nodeContainer.css';
 
-export type SerializedNodeContainer = Spread<
+export type SerializedEventNodeContainer = Spread<
   {
     //none
   },
   SerializedElementNode
 >;
 
-export class nodeContainer extends ElementNode {
+export class eventNodeContainer extends ElementNode {
   static getType(): string {
-    return 'node-container';
+    return 'event-node-container';
   }
 
-  static clone(node: nodeContainer): nodeContainer {
-    return new nodeContainer(node.__key);
+  static clone(node: eventNodeContainer): eventNodeContainer {
+    return new eventNodeContainer(node.__key);
   }
 
   constructor(key?: NodeKey) {
@@ -58,7 +58,7 @@ export class nodeContainer extends ElementNode {
     const element = document.createElement('div');
     element.setAttribute('spellcheck', 'false');
     element.setAttribute('contenteditable', 'false');
-    element.className = 'node-container';
+    element.className = 'event-node-container';
     return element;
   }
 
@@ -68,7 +68,7 @@ export class nodeContainer extends ElementNode {
 
   exportDOM(): DOMExportOutput {
     const element = document.createElement('div');
-    element.className = 'node-container';
+    element.className = 'event-node-container';
     element.setAttribute('spellcheck', 'false');
     return { element };
   }
@@ -76,38 +76,38 @@ export class nodeContainer extends ElementNode {
 static importDOM(): DOMConversionMap | null {
   return {
     div: (domNode: HTMLElement) => 
-      domNode.classList.contains('node-container') 
+      domNode.classList.contains('event-node-container') 
         ? { 
-            conversion: () => ({ node: $createNodeContainer() }), 
+            conversion: () => ({ node: $createEventNodeContainer() }), 
             priority: 1 
           }
         : null
   };
 }
 
-  static importJSON(serializedNode: SerializedNodeContainer)
-  : nodeContainer
+  static importJSON(serializedNode: SerializedEventNodeContainer)
+  : eventNodeContainer
   {
     if (serializedNode.children) {
       // La gestion des enfants se fera automatiquement par Lexical
       // car nous avons défini la méthode canInsert* appropriée
     }
-    return $createNodeContainer().updateFromJSON(serializedNode);
+    return $createEventNodeContainer().updateFromJSON(serializedNode);
   }
 
-  exportJSON(): SerializedNodeContainer {
+  exportJSON(): SerializedEventNodeContainer {
     return {
       ...super.exportJSON()
     };
   }
 }
 
-export function $createNodeContainer(): nodeContainer {
-  return new nodeContainer();
+export function $createEventNodeContainer(): eventNodeContainer {
+  return new eventNodeContainer();
 }
 
-export function $isNodeContainer(
+export function $isEventNodeContainer(
   node: LexicalNode | null | undefined,
-): node is nodeContainer {
-  return node instanceof nodeContainer;
+): node is eventNodeContainer {
+  return node instanceof eventNodeContainer;
 }
